@@ -1,0 +1,46 @@
+import React from 'react';
+import axios from 'axios';
+
+import Categories from '../components/Categories';
+import Sort from '../components/Sort';
+import PizzaBlock from '../components/PizzaBlock';
+import Skeleton from '../components/PizzaBlock/Skeleton';
+
+function Home() {
+  const [items, setItems] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const itemsRes = await axios.get('https://633ed7b183f50e9ba3b9e39b.mockapi.io/items');
+
+      setIsLoading(false);
+
+      setItems(itemsRes.data);
+    }
+    window.scrollTo(0, 0);
+    fetchData();
+  }, []);
+
+  return (
+    <div className='container'>
+      <div className='content__top'>
+        <Categories />
+        <Sort />
+      </div>
+      <h2 className='content__title'>Все пиццы</h2>
+      <div className='content__items'>
+        {isLoading
+          ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
+          : items.map((obj) => (
+              <PizzaBlock
+                key={obj.id}
+                {...obj}
+              />
+            ))}
+      </div>
+    </div>
+  );
+}
+
+export default Home;
